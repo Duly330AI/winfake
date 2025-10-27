@@ -1,0 +1,5 @@
+users:
+  - username: "Milan"
+    password: "mafioso"
+  - username: "Gast"
+    password: "guest"

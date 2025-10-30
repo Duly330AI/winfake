@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QMdiArea, QMdiSubWindow, QToolButton, QLineEdit
-from PySide6.QtCore import Qt, QTimer, QSize
+from PySide6.QtCore import Qt, QTimer, QSize, QEvent
 from PySide6.QtGui import QIcon, QKeySequence, QShortcut, QPalette, QBrush
 from core.session import Session
 from apps.notepad_app import NotepadWidget
@@ -18,6 +18,29 @@ except Exception:
 ROOT = Path(__file__).resolve().parents[1]
 WALLPAPER = ROOT / "assets" / "wallpapers" / "win10.jpg"
 ICONS_DIR = ROOT / "assets" / "icons" / "applications"
+
+class CustomSubWindow(QMdiSubWindow):
+    """QMdiSubWindow that maps native minimize to hide() to avoid MDI icon frames."""
+    def showMinimized(self):
+        # When user clicks the titlebar minimize button, hide instead
+        try:
+            self.hide()
+            self.setWindowState(Qt.WindowNoState)
+        except Exception:
+            pass
+
+    def changeEvent(self, event):
+        # Intercept WindowStateChange and force hidden state
+        try:
+            if event and event.type() == QEvent.WindowStateChange:
+                if self.windowState() & Qt.WindowMinimized:
+                    self.hide()
+                    self.setWindowState(Qt.WindowNoState)
+                    event.accept()
+                    return
+        except Exception:
+            pass
+        return super().changeEvent(event)
 
 class DraggableIcon(QToolButton):
     """Draggbares Desktop-Icon mit Label unten"""
@@ -206,6 +229,7 @@ class DesktopWindow(QWidget):
         
         # Escape zum Schließen
         QShortcut(QKeySequence("Escape"), self, activated=self.close)
+
         
     def _setup_desktop_icons(self):
         """Erstelle Desktop-Icons für Apps im Grid-Layout"""
@@ -356,7 +380,8 @@ class DesktopWindow(QWidget):
         else:
             w = widget_cls()
         
-        sub = QMdiSubWindow()
+        # Use custom subwindow to prevent Qt minimized icon frame
+        sub = CustomSubWindow()
         sub.setWidget(w)
         sub.setAttribute(Qt.WA_DeleteOnClose)
         sub.setWindowTitle(title)

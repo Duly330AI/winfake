@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Unit test / coverage reports
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Environments
+.env
+.venv/
+venv/
+
+# Build outputs
+build/
+dist/
+*.egg-info/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Project-specific
+sandbox/
+# Keep icons in repo; do not ignore assets/icons
+# assets/icons/
+
+# Logs
+*.log

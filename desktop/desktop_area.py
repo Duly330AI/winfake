@@ -371,62 +371,52 @@ class DesktopWindow(QWidget):
         flags |= Qt.WindowCloseButtonHint
         sub.setWindowFlags(flags)
         
-        # Taskbar-Button erstellen
-        taskbar_btn = QPushButton(title[:20])  # Kurzer Titel
-        taskbar_btn.setFixedSize(150, 36)
-        taskbar_btn.setStyleSheet("""
-            QPushButton {
-                background: rgba(255, 255, 255, 0.1);
-                color: white;
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                border-radius: 4px;
-                text-align: left;
-                padding-left: 8px;
-                font-size: 10px;
-            }
-            QPushButton:hover {
-                background: rgba(255, 255, 255, 0.15);
-            }
-        """)
+        # Styles
+        style_active = (
+            "QPushButton {"
+            " background: rgba(255,255,255,0.16);"
+            " color: white;"
+            " border: 1px solid rgba(255,255,255,0.25);"
+            " border-radius: 6px;"
+            " text-align: left; padding-left: 8px; font-size: 11px;"
+            "} QPushButton:hover { background: rgba(255,255,255,0.22); }"
+        )
+        style_dimmed = (
+            "QPushButton {"
+            " background: rgba(255,255,255,0.06);"
+            " color: rgba(255,255,255,0.7);"
+            " border: 1px solid rgba(255,255,255,0.12);"
+            " border-radius: 6px;"
+            " text-align: left; padding-left: 8px; font-size: 11px;"
+            "} QPushButton:hover { background: rgba(255,255,255,0.12); }"
+        )
+
+        # Taskbar-Button erstellen (mit App-Icon)
+        taskbar_btn = QPushButton(title[:24])
+        taskbar_btn.setFixedSize(180, 36)
+        # Icon ermitteln
+        try:
+            app_icon = QIcon()
+            if widget_cls.__name__ == 'NotepadWidget':
+                app_icon = QIcon(str(ICONS_DIR / 'notepad.ico'))
+            taskbar_btn.setIcon(app_icon)
+            taskbar_btn.setIconSize(QSize(16, 16))
+        except Exception:
+            pass
+        taskbar_btn.setStyleSheet(style_active)
         
         # Button-Funktionen
         def toggle_window():
             if sub.isVisible():
                 # Fenster verstecken (wie Windows Minimize)
                 sub.hide()
-                taskbar_btn.setStyleSheet("""
-                    QPushButton {
-                        background: rgba(255, 255, 255, 0.05);
-                        color: rgba(255, 255, 255, 0.6);
-                        border: 1px solid rgba(255, 255, 255, 0.1);
-                        border-radius: 4px;
-                        text-align: left;
-                        padding-left: 8px;
-                        font-size: 10px;
-                    }
-                    QPushButton:hover {
-                        background: rgba(255, 255, 255, 0.1);
-                    }
-                """)
+                taskbar_btn.setStyleSheet(style_dimmed)
             else:
                 # Fenster wiederherstellen
                 sub.show()
                 sub.raise_()
                 sub.activateWindow()
-                taskbar_btn.setStyleSheet("""
-                    QPushButton {
-                        background: rgba(255, 255, 255, 0.1);
-                        color: white;
-                        border: 1px solid rgba(255, 255, 255, 0.2);
-                        border-radius: 4px;
-                        text-align: left;
-                        padding-left: 8px;
-                        font-size: 10px;
-                    }
-                    QPushButton:hover {
-                        background: rgba(255, 255, 255, 0.15);
-                    }
-                """)
+                taskbar_btn.setStyleSheet(style_active)
         
         # Event Filter um Minimize abzufangen (QMdiSubWindow nutzt Events nicht Signals)
         from PySide6.QtCore import QEvent, QObject
@@ -444,21 +434,13 @@ class DesktopWindow(QWidget):
                         self.subwin.hide()
                         self.subwin.setWindowState(Qt.WindowNoState)
                         # Dim button
-                        self.btn.setStyleSheet("""
-                            QPushButton {
-                                background: rgba(255, 255, 255, 0.05);
-                                color: rgba(255, 255, 255, 0.6);
-                                border: 1px solid rgba(255, 255, 255, 0.1);
-                                border-radius: 4px;
-                                text-align: left;
-                                padding-left: 8px;
-                                font-size: 10px;
-                            }
-                            QPushButton:hover {
-                                background: rgba(255, 255, 255, 0.1);
-                            }
-                        """)
+                        self.btn.setStyleSheet(style_dimmed)
                         return True  # Event handled
+                # Sichtbarkeit
+                if event.type() == QEvent.Hide:
+                    self.btn.setStyleSheet(style_dimmed)
+                elif event.type() == QEvent.Show:
+                    self.btn.setStyleSheet(style_active)
                 return super().eventFilter(obj, event)
         
         minimize_filter = MinimizeFilter(sub, taskbar_btn)
@@ -489,6 +471,15 @@ class DesktopWindow(QWidget):
         
         taskbar_btn.clicked.connect(toggle_window)
         sub.destroyed.connect(remove_taskbar_button)
+        
+        # Update Button-Styles anhand aktiven Subfensters
+        try:
+            def update_active(active_sub):
+                for sw, btn in list(self.taskbar_buttons.items()):
+                    btn.setStyleSheet(style_active if sw is active_sub and sw.isVisible() else style_dimmed)
+            self.mdi.subWindowActivated.connect(update_active)
+        except Exception:
+            pass
         
         # Button zur Taskleiste hinzufügen
         self.taskbar_container.addWidget(taskbar_btn)

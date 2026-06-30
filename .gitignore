@@ -1,4 +1,4 @@
-# Byte-compiled / optimized / DLL files
+# Byte-compiled, optimized, and DLL files
 __pycache__/
 *.pyc
 *.py[cod]

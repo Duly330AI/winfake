@@ -1,4 +1,4 @@
-# Byte-compiled, optimized, and DLL files
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.pyc
 *.py[cod]
@@ -29,6 +29,7 @@ Thumbs.db
 
 # Project-specific
 sandbox/
+
 # Keep icons in repo; do not ignore assets/icons
 # assets/icons/
 

@@ -1,23 +1,16 @@
 # winfake
 
-**winfake** is a small Windows-inspired fake desktop horror prototype built with
-**Python** and **PySide6**.
+**winfake** is a small Windows-inspired fake desktop horror prototype built with **Python** and **PySide6**.
 
-The project experiments with a simulated login screen, desktop environment,
-taskbar, fake applications, and horror-style scripted interactions. It was built
-as a playful UI/UX and desktop-simulation experiment, not as a real operating
-system.
+The project experiments with a simulated login screen, desktop environment, taskbar, fake applications, and horror-style scripted interactions. It was built as a playful UI/UX and desktop-simulation experiment, not as a real operating system.
 
 ## Status
 
 **Prototype / experimental side project**
 
-The app is usable as a small interactive prototype. It is not a complete desktop
-environment and not intended to replace or emulate a real operating system.
+The app is usable as a small interactive prototype. It is not a complete desktop environment and not intended to replace or emulate a real operating system.
 
-This project is not affiliated with Microsoft or Windows. Some visuals may be
-placeholder/prototype assets and should be replaced before any commercial or
-public release beyond portfolio/demo usage.
+This project is not affiliated with Microsoft or Windows. Some visuals may be placeholder/prototype assets and should be replaced before any commercial or public release beyond portfolio/demo usage.
 
 ## Concept
 
@@ -52,3 +45,12 @@ Example interactions include:
 <img width="1594" height="932" alt="Screenshot 2025-10-27 160546" src="https://github.com/user-attachments/assets/d01b6375-813d-4e0e-b412-2f73e8d41070" />
 
 <img width="1603" height="934" alt="Screenshot 2025-10-27 171206" src="https://github.com/user-attachments/assets/8c290231-d129-456b-8ad2-e5df4ed4df1b" />
+
+## Tech Stack
+
+- Python
+- PySide6 / Qt
+
+## Notes
+
+This is an experimental UI prototype and portfolio side project. The focus is on desktop-style interaction, fake application windows, and scripted horror/ARG-style presentation.
